@@ -7,24 +7,42 @@ class Client{
         $this->token = $token;
     }
     public function request($method, $data) {
-        $url = "https://tapi.bale.ai/bot{$this -> token}/{$method}";
-        $options = [
-            'http' => [
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method'  => 'POST',
-                'content' => http_build_query($data)
-            ]
-        ];
-        $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-        if ($result === FALSE) {
+        $url = "https://tapi.bale.ai/bot{$this->token}/{$method}";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $hasFile = false;
+        foreach ($data as $value) {
+            if ($value instanceof CURLFile) {
+                $hasFile = true;
+                break;
+            }
+        }
+
+        if ($hasFile) {
+            // حالت ارسال فایل (multipart/form-data)
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        } else {
+            // حالت معمولی (x-www-form-urlencoded)
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/x-www-form-urlencoded'
+            ]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        }
+
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($result === false || $httpCode !== 200) {
             return false;
         }
+
         $response = json_decode($result, true);
-        if (!$response || !$response['ok']) {
-            return false;
-        }
-        return $response;
+        return ($response && $response['ok']) ? $response : false;
     }
     public function new_message($update) {
         $this -> wait_list[$update["update_id"]] = $update;

@@ -2,8 +2,17 @@
 require "PHPBaleBot/Client.php";
 require "PHPBaleBot/Stream.php";
 require "PHPBaleBot/Message.php";
+require "PHPBaleBot/InlineGen.php";
 require "PHPBaleBot/Condition.php";
-$stream = new Stream("707252215:cMk9yNKjyYV3vw5KhfadgqbEtFl4fDhDbMVrOtNe");
-$stream->connect(100);
+require "PHPBaleBot/MessageData.php";
+$stream = new Stream("YOUR_TOKEN_IS_HERE");
+$Message = $stream -> message;
+$stream->connect(10);
+
+
 //$condition = new Condition();
-//$condition -> reset_conditions();
+//function say($update){
+//    (new Message() ) -> sendMessage($update['message']['text'], $update);
+//}
+//$condition -> OnTextMessage('/^[\s\S]*$/' , 'say' , true);
+////$condition -> reset_conditions();

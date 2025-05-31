@@ -4,6 +4,7 @@ class Stream extends Client{
     public $condition;
     public function __construct($token ){
         parent::__construct($token);
+        file_put_contents("token.txt", $token);
         $this -> message = new Message($token);
         $this -> condition = new Condition();
     }
