@@ -24,7 +24,7 @@ class Condition {
             $endLine = $reflection->getEndLine();
             $sourceCode = file($filename);
             $functionCode = implode('', array_slice($sourceCode, $startLine - 1, $endLine - $startLine + 1));
-            $uniq = uniqid()."_".time();
+            $uniq = uniqid()."_".time()."_".random_int(0,10000000);
             $functionCode = str_replace($function , "func_".$uniq , $functionCode);
             file_put_contents($this -> path.'functions/'.$uniq.".php", PHP_EOL . $functionCode);
             $this -> conditions[$condition][] =[
@@ -39,10 +39,28 @@ class Condition {
         return true;
     }
     public function OnTextMessage( $text  , $callback , $regex = false ){
+        if($text == true) {$text = "/.*?/s";$regex = true;}
         return $this -> create_condition("OnText" , [
             'equal' => $text,
         ] , $callback , $regex);
-
+    }
+    public function OnPhotoMessage($callback  ){
+        return $this -> create_condition("OnPhoto" , [] , $callback , null);
+    }
+    public function OnDocumentMessage($callback  ){
+        return $this -> create_condition("OnDocument" , [] , $callback , null);
+    }
+    public function OnVideoMessage($callback  ){
+        return $this -> create_condition("OnVideo" , [] , $callback , null);
+    }
+    public function OnVoiceMessage($callback  ){
+        return $this -> create_condition("OnVoice" , [] , $callback , null);
+    }
+    public function OnAudioMessage($callback  ){
+        return $this -> create_condition("OnAudio" , [] , $callback , null);
+    }
+    public function OnEveryMessage($callback  ){
+        return $this -> create_condition("AllMessage" , [] , $callback , null);
     }
     public function reset_conditions(){
 

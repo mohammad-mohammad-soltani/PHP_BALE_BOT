@@ -6,8 +6,8 @@ class Client{
     public function __construct($token){
         $this->token = $token;
     }
-    public function request($method, $data) {
-        $url = "https://tapi.bale.ai/bot{$this->token}/{$method}";
+    public function request($method, $data , $append_url = "") {
+        $url = "https://tapi.bale.ai/{$append_url}bot{$this->token}/{$method}";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -63,5 +63,8 @@ class Client{
             }
         }
         return true;
+    }
+    public function get_file_path($file_id) {
+        return "https://tapi.bale.ai/file/bot{$this -> token}/{$file_id}";
     }
 }
